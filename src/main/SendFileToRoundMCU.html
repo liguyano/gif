@@ -129,6 +129,34 @@
     <script type="module">
       import GifToCanvas from './script/gifToCanvas.js'
       // Vue.config.productionTip = false
+      function downloadFile(file, fileName) {
+        // 创建一个 Blob 对象
+        const blob = new Blob([file], { type: file.type });
+
+        // 创建一个URL表示这个Blob对象
+        const url = window.URL.createObjectURL(blob);
+
+        // 创建一个新的a元素
+        const a = document.createElement('a');
+
+        // 设置其href属性为我们的URL
+        a.href = url;
+
+        // 设置下载的文件名
+        a.download = fileName || file.name;
+
+        // 将a元素添加到body中
+        document.body.appendChild(a);
+
+        // 触发点击事件
+        a.click();
+
+        // 在下载完成后移除a元素和释放URL对象
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+      }
       new Vue({
         el: '#app',
         data() {
@@ -290,6 +318,7 @@
             return new Promise((resolve, reject) => {
               const formData = new FormData()
               formData.append('image', file)
+              downloadFile(file,file.filename);
               fetch('/upload', {
                 method: 'POST',
                 body: formData
