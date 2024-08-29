@@ -64,6 +64,9 @@ function handleFileSelectGif(event) {
   })
 }
 $(function () {
+  $.post("/notsend","mess=ready",function (dat){
+  console.log(dat);
+})
   document.getElementById('imageFile').addEventListener('change', handleFileSelectGif, false)
   let eyeBtns = $('.eyeBtn')
   eyeBtns.click(function () {
