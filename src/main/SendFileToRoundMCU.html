@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>圆形图片与按钮布局</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="style.css" />
     <script type="application/javascript" src="script/jquery-3.1.0.min.js"></script>
     <script type="application/javascript" src="script/SendMcu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <link rel="stylesheet" href="./script/cropper.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
 </head>
 <body>
 <!-- 替换为 canvas 元素 -->
@@ -126,7 +128,7 @@
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script type="module">
       import GifToCanvas from './script/gifToCanvas.js'
-      Vue.config.productionTip = false
+      // Vue.config.productionTip = false
       new Vue({
         el: '#app',
         data() {
