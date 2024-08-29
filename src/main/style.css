@@ -59,10 +59,6 @@ body {
     background-color: rgba(60, 163, 109, 0.64);
 }
 
-.el-dialog__wrapper {
-    display: none;
-}
-
-.v-modal {
+.jsgif {
     display: none;
 }
