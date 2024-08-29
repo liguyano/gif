@@ -1,79 +1,319 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>圆形图片与按钮布局</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script type="application/javascript" src="script/jquery-3.1.0.min.js"></script>
     <script type="application/javascript" src="script/SendMcu.js"></script>
-</head>
-<body>
-<!-- 替换为 canvas 元素 -->
-<div class="row" id="defaultImg"  >
-    <div class="circle-image" >
-        <img src="img/round.jpg" alt="Image 1">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16"></script>
+    <link rel="stylesheet" href="./script/cropper.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css" />
+    <style>
+      .el-dialog__wrapper {
+        display: none;
+      }
+      .v-modal {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 替换为 canvas 元素 -->
+    <div class="row" id="defaultImg">
+      <div class="circle-image">
+        <img src="img/round.jpg" alt="Image 1" />
+      </div>
+      <div class="circle-image">
+        <img src="img/round.jpg" alt="Image 2" />
+      </div>
+      <div class="circle-image">
+        <img src="img/round.jpg" alt="Image 3" />
+      </div>
     </div>
-    <div class="circle-image">
-        <img src="img/round.jpg" alt="Image 2">
-    </div>
-    <div class="circle-image">
-        <img src="img/round.jpg" alt="Image 3">
-    </div>
-</div>
-<div class="row" id="canvasRow" style="display: none;">
-    <div class="circle-image">
+    <div class="row" id="canvasRow" style="display: none">
+      <div class="circle-image">
         <canvas class="image-canvas" id="myCanvas" width="240" height="240"></canvas>
-    </div>
-    <div class="circle-image">
+      </div>
+      <div class="circle-image">
         <canvas class="image-canvas"></canvas>
-    </div>
-    <div class="circle-image">
+      </div>
+      <div class="circle-image">
         <canvas class="image-canvas"></canvas>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
-        <button class="button eyeBtn" >eye 1</button>
+    <div class="row buttons-row">
+      <div class="buttons-container">
+        <button class="button eyeBtn">eye 1</button>
         <button class="button eyeBtn">eye 2</button>
         <button class="button eyeBtn">eye 3</button>
         <button class="button eyeBtn">eye 4</button>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
-        <button class="button"> 手动切换</button>
-        <button class="button"> 自动切换</button>
+    <div class="row buttons-row">
+      <div class="buttons-container">
+        <button class="button">手动切换</button>
+        <button class="button">自动切换</button>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
+    <div class="row buttons-row">
+      <div class="buttons-container">
         <button class="button eyeBtn">cartoon 1</button>
         <button class="button eyeBtn">cartoon 2</button>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
+    <div class="row buttons-row">
+      <div class="buttons-container">
         <button class="button" id="selectImgBtn">IMAGE</button>
-        <input type="file" id="fileInput" style="display: none;" accept="image/*">
+        <input type="file" id="fileInput" style="display: none" accept="image/*" />
         <button class="button" id="gif_btn" onclick="gifClick()">GIF</button>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
+    <div class="row buttons-row">
+      <div class="buttons-container">
         <button class="button">OTA 更新</button>
-        <button class="button ">联系我们</button>
+        <button class="button">联系我们</button>
+      </div>
     </div>
-</div>
-<div class="row buttons-row">
-    <div class="buttons-container">
+    <div class="row buttons-row">
+      <div class="buttons-container">
         <p id="status"></p>
+      </div>
     </div>
-</div>
-<div style="display: none">
-    <input type="file" id="imageFile" accept="image/*">
-    <button onclick="uploadImage()">Upload Image</button>
-</div>
+    <div style="display: none">
+      <input type="file" id="imageFile" accept="image/*" />
+      <button onclick="uploadImage()">Upload Image</button>
+    </div>
+    <div id="app" style="display: none">
+      <div class="main cut">
+        <div class="cut-upload-wrap cut-model1">
+          <div class="cut-upload-container">
+            <div class="cut-upload-main">
+              <div class="cut-upload-btn" @click="uploadBtn()">上传图片</div>
+              <input
+                type="file"
+                style="opacity: 0"
+                accept="image/gif,image/png,image/jpeg,image/jpg"
+                class="cut-upload-file com-input-avatar"
+                ref="J-uploadBtn"
+                id="J-uploadBtn"
+                @change="changeFile"
+              />
+            </div>
+            <div class="cut-upload-tip">
+              请上传50M以内的图片!&nbsp;&nbsp;支持GIF、PNG、JPG、JPEG
+            </div>
+          </div>
+          <div class="priview-box">
+            <img :src="previewUrl" alt="" v-if="previewUrl" />
+            <span v-else style="color: #666">暂未裁剪图片！</span>
+          </div>
+        </div>
+      </div>
 
-</body>
+      <el-dialog title="裁剪" :visible.sync="cropFlag" append-to-body :destroy-on-close="true">
+        <div class="cropper-content">
+          <div class="cropper" style="text-align: center">
+            <img id="image" ref="cropper-img" :src="cutImgUrl" />
+          </div>
+          宽：{{ canvasData.width }} 高：{{ canvasData.height }}
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="closeCut()">取 消</el-button>
+          <el-button type="primary" @click="finishCut()" :loading="cutLoading"
+            >{{ cutLoading ? '裁剪中...' : '确定' }}</el-button
+          >
+        </div>
+      </el-dialog>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="./script/cropper.min.js"></script>
+    <script src="./script/gif.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script type="module">
+      import GifToCanvas from './script/gifToCanvas.js'
+      Vue.config.productionTip = false
+      new Vue({
+        el: '#app',
+        data() {
+          return {
+            imgType: 'image/gif',
+            cutImgUrl: '',
+            myCropper: '',
+            cropFlag: false,
+            cutLoading: false,
+            gifToCanvas: '',
+            gif: '',
+            previewUrl: '',
+            canvasData: {
+              width: 0,
+              height: 0
+            }
+          }
+        },
+        methods: {
+          uploadBtn() {
+            let uploadBtn = $('#J-uploadBtn')
+            uploadBtn.click()
+          },
+          dataURLtoBlob(dataurl) {
+            var arr = dataurl.split(','),
+              mime = arr[0].match(/:(.*?);/)[1],
+              bstr = atob(arr[1]),
+              n = bstr.length,
+              u8arr = new Uint8Array(n)
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n)
+            }
+            return new Blob([u8arr], { type: mime })
+          },
+          fileToBase64(file) {
+            return new Promise((resolve) => {
+              let reader = new FileReader()
+              reader.onload = function (evt) {
+                let base64 = evt.target.result
+                resolve(base64)
+              }
+              reader.readAsDataURL(file)
+            })
+          },
+          async changeFile(e) {
+            let file = e.target.files[0]
+            if (file) {
+              const that = this
+              this.fileinfo = file //保存file信息
+              this.imgType = file.type
+              this.cutImgUrl = await this.fileToBase64(file) //file转base64
+              if (file.type == 'image/gif') {
+                //gif图片
+                this.cropFlag = true
+                this.$nextTick(() => {
+                  setTimeout(() => {
+                    const that = this
+                    this.myCropper = new Cropper(this.$refs['cropper-img'], {
+                      aspectRatio: 300 / 300,
+                      crop(event) {
+                        that.canvasData.width = event.detail.width
+                        that.canvasData.height = event.detail.height
+                        console.log(event.detail.x)
+                        console.log(event.detail.y)
+                        console.log(event.detail.width)
+                        console.log(event.detail.height)
+                        console.log(event.detail.rotate)
+                        console.log(event.detail.scaleX)
+                        console.log(event.detail.scaleY)
+                        that.finishCut()
+                      }
+                    })
+                  }, 0)
+                })
+              } else {
+                //非gif图片
+                alert(
+                  '请上传gif格式图片，本工程只处理gif图，但预留了非gif逻辑空间，有需要请自行补充！'
+                )
+              }
+            }
+          },
+          //关闭裁剪
+          closeCut() {
+            this.cropFlag = false
+            this.cutLoading = false
+            if (this.myCropper) {
+              this.myCropper.destroy()
+            }
+            if (this.gif) {
+              this.gif = ''
+            }
+            if (this.gifToCanvas) {
+              this.gifToCanvas.clear()
+            }
+          },
+          async finishCut() {
+            if (this.cutLoading) return
+            this.cutLoading = true
+            if (this.imgType == 'image/gif') {
+              //gif处理
+              let blob = await this.cropGifHandle()
+              // TODO: 这里可以上传blob
+              const file = new File([blob], 'avatar.gif', { type: 'image/gif' })
+              await this.uploadImage(file)
+              this.previewUrl = window.URL.createObjectURL(blob)
+            } else {
+              //预留png
+            }
+            this.cutLoading = false
+            this.cropFlag = false
+          },
+          //gif裁剪
+          async cropGifHandle() {
+            return new Promise((resolve, reject) => {
+              if (this.myCropper) {
+                const url = URL.createObjectURL(this.dataURLtoBlob(this.myCropper.url))
+                const cropBoxData = this.myCropper.getCropBoxData()
+                const canvasData = this.myCropper.getCanvasData()
+                console.log(GifToCanvas)
+                this.gifToCanvas = new GifToCanvas(url, {
+                  targetOffset: {
+                    dx: cropBoxData.left - canvasData.left,
+                    dy: cropBoxData.top - canvasData.top,
+                    width: cropBoxData.width,
+                    height: cropBoxData.height,
+                    sWidth: cropBoxData.width,
+                    sHeight: cropBoxData.height
+                  }
+                })
+                this.gif = new GIF({
+                  workers: 4,
+                  quality: 10,
+                  width: 240,
+                  height: 240,
+                  workerScript: `./script/gif.worker.js`
+                })
+                const addFrame = (canvas, delay) => {
+                  this.gif.addFrame(canvas, { copy: true, delay })
+                }
+                this.gifToCanvas.on('progress', (canvas, delay) => {
+                  addFrame(canvas, delay)
+                })
+                this.gifToCanvas.on('finished', (canvas, delay) => {
+                  addFrame(canvas, delay)
+                  this.gif.render()
+                })
+                this.gif.on('finished', (blob) => {
+                  console.log('finished', window.URL.createObjectURL(blob))
+                  resolve(blob)
+                })
+                this.gifToCanvas.init()
+              } else {
+                reject()
+              }
+            })
+          },
+          uploadImage(file) {
+            return new Promise((resolve, reject) => {
+              const formData = new FormData()
+              formData.append('image', file)
+              fetch('/Upload', {
+                method: 'POST',
+                body: formData
+              })
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log('Success:', data)
+                alert('文件上传成功！')
+                resolve()
+              })
+              .catch((error) => {
+                console.error('Error:', error)
+                alert('文件上传失败！')
+                reject()
+              })
+          }
+        }
+      })
+    </script>
+  </body>
 </html>
