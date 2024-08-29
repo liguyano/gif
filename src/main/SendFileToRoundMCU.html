@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圆形图片与按钮布局</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="application/javascript" src="script/jquery-3.1.0.min.js"></script>
+    <script type="application/javascript" src="script/SendMcu.js"></script>
+</head>
+<body>
+<!-- 替换为 canvas 元素 -->
+<div class="row" id="defaultImg"  >
+    <div class="circle-image" >
+        <img src="img/round.jpg" alt="Image 1">
+    </div>
+    <div class="circle-image">
+        <img src="img/round.jpg" alt="Image 2">
+    </div>
+    <div class="circle-image">
+        <img src="img/round.jpg" alt="Image 3">
+    </div>
+</div>
+<div class="row" id="canvasRow" style="display: none;">
+    <div class="circle-image">
+        <canvas class="image-canvas" id="myCanvas" width="240" height="240"></canvas>
+    </div>
+    <div class="circle-image">
+        <canvas class="image-canvas"></canvas>
+    </div>
+    <div class="circle-image">
+        <canvas class="image-canvas"></canvas>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <button class="button eyeBtn" >eye 1</button>
+        <button class="button eyeBtn">eye 2</button>
+        <button class="button eyeBtn">eye 3</button>
+        <button class="button eyeBtn">eye 4</button>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <button class="button"> 手动切换</button>
+        <button class="button"> 自动切换</button>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <button class="button eyeBtn">cartoon 1</button>
+        <button class="button eyeBtn">cartoon 2</button>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <button class="button" id="selectImgBtn">IMAGE</button>
+        <input type="file" id="fileInput" style="display: none;" accept="image/*">
+        <button class="button" id="gif_btn" onclick="gifClick()">GIF</button>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <button class="button">OTA 更新</button>
+        <button class="button ">联系我们</button>
+    </div>
+</div>
+<div class="row buttons-row">
+    <div class="buttons-container">
+        <p id="status"></p>
+    </div>
+</div>
+<div style="display: none">
+    <input type="file" id="imageFile" accept="image/*">
+    <button onclick="uploadImage()">Upload Image</button>
+</div>
+
+</body>
+</html>
