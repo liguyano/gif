@@ -62,3 +62,7 @@ body {
 .jsgif {
     display: none;
 }
+button:disabled{
+    background-color: #436896;
+    cursor: not-allowed;
+}

@@ -89,7 +89,8 @@
         delays = [];
         const file = event.target.files[0];
         const reader = new FileReader();
-
+        const btn = $('#gif_btn')
+        btn.attr('disabled', true)
         reader.onload = function (e) {
             const img = document.createElement('img');
             img.src = e.target.result;
@@ -108,10 +109,12 @@
                         frames.push(frameImage.src);  // 将帧的Base64数据保存到数组中
                         framesContainer.appendChild(frameImage);
                     }
+                    btn.attr('disabled', false)
                 });
             });
 
             document.body.appendChild(img);
+
         };
 
         reader.readAsDataURL(file);
@@ -158,7 +161,6 @@
 
     function base64ToFile(base64, fileName) {
         let arr = base64.split(",");
-        let mime = arr[0].match(/:(.\*?);/)[1];
         let bstr = atob(arr[1]);
         let n = bstr.length;
         let u8arr = new Uint8Array(n);
@@ -166,7 +168,7 @@
         while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
-        return new File([u8arr], fileName, {type: mime});
+        return new File([u8arr], fileName, {type: 'image/gif'});
     }
 
     function sendMessage() {
